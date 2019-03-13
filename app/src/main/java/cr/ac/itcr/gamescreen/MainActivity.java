@@ -1,5 +1,7 @@
 package cr.ac.itcr.gamescreen;
 
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.support.v4.view.MotionEventCompat;
@@ -14,8 +16,12 @@ import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
+public class MainActivity extends AppCompatActivity {
+    int[][] gameBoard = new int[22][10];
+
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         GridLayout board = findViewById(R.id.boardLayout);
 
+        //Starts the gameboard with 0 on all cells
+        //startBoard();
 
         //Get screen size
         Display display = getWindowManager().getDefaultDisplay();
@@ -48,40 +56,94 @@ public class MainActivity extends AppCompatActivity {
 
         int cellSize =  (width - 16)/12 - 1;//board.getWidth();
 
+
+
         for(int i = 0; i<288; i++) {
             View img = new View(this);
             img.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
-
-            if (i % 24 == 23 || i % 12 == 0 || i < 11)
-                img.setBackgroundColor(Color.GRAY);
-
-            else
-                img.setBackgroundColor(Color.BLACK);
-
             board.addView(img, i);
-
         }
-        System.out.println("+-+-+-+-+-+-+-+-+-+-+-+-+-+ " + board.getMeasuredHeight());
 
-/*
-        View pieceCreator = new View(this);
-        ImageView red = new ImageView(this);
-        red.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
-        red.setImageResource(R.drawable.red);
-        board.addView(red, 148);
 
-        pieceCreator.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
-        pieceCreator.setBackgroundColor(Color.RED);
-        board.addView(pieceCreator, 148);
-        int count = board.getChildCount();
-        for(int i = 0; i<count; i++){
-            //ImageView v = (ImageView) board.getChildAt(i);
-            //if (i == 0){
-                //v.setImageResource(R.drawable.aqua);
-                board.getChildAt(i).setBackgroundColor(Color.BLUE);
-                System.out.println(i);
-            //}
-        }*/
+
+        final View pieceCreator1 = new View(this);
+        pieceCreator1.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
+        pieceCreator1.setBackgroundColor(Color.RED);
+        final View pieceCreator2 = new View(this);
+        pieceCreator2.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
+        pieceCreator2.setBackgroundColor(Color.RED);
+        final View pieceCreator3 = new View(this);
+        pieceCreator3.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
+        pieceCreator3.setBackgroundColor(Color.RED);
+        final View pieceCreator4 = new View(this);
+        pieceCreator4.setLayoutParams(new ViewGroup.LayoutParams(cellSize, cellSize));
+        pieceCreator4.setBackgroundColor(Color.RED);
+        board.removeViewAt(14);
+        board.addView(pieceCreator1, 14);
+        board.removeViewAt(15);
+        board.addView(pieceCreator2, 15);
+        board.removeViewAt(25);
+        board.addView(pieceCreator3, 25);
+        board.removeViewAt(26);
+        board.addView(pieceCreator4, 26);
+        Thread piece1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animation = ObjectAnimator.ofFloat(pieceCreator1, "translationY", 10000f);
+                animation.setDuration(10000);
+                animation.start();
+            }
+        });
+        Thread piece2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animation = ObjectAnimator.ofFloat(pieceCreator2, "translationY", 10000f);
+                animation.setDuration(10000);
+                animation.start();
+            }
+        });
+        Thread piece3 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animation = ObjectAnimator.ofFloat(pieceCreator3, "translationY", 10000f);
+                animation.setDuration(10000);
+                animation.start();
+            }
+        });
+        Thread piece4 =new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ObjectAnimator animation = ObjectAnimator.ofFloat(pieceCreator4, "translationY", 10000f);
+                animation.setDuration(10000);
+                animation.start();
+            }
+        });
+
+        piece1.run(); piece2.run(); piece3.run(); piece4.run();
+
+
     }
 
+    private boolean startBoard(){
+        try {
+            for (int i = 0; i < 22; i++)
+                for (int j = 0; j < 10; j++)
+                    gameBoard[i][j] = 0;
+            return true;
+        }catch (IndexOutOfBoundsException e){
+            return false;
+        }
+    }
+
+    private void printMatrix(){
+        String row = "";
+        for(int i = 0; i<22; i++) {
+            row = "";
+            for (int j = 0; j < 10; j++) {
+                row += gameBoard[i][j] + " ";
+            }
+            System.out.println(row);
+        }
+
+    }
 }
